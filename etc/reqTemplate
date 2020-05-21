@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packet type="SOAP报文">
+  {% for field in fields %}
+      <field fieldDefaultValue="&quot;&quot;" fieldDescription="{{field.fieldDescription}}" fieldDictGroup=";" fieldName="{{field.fieldName}}" fieldType="String" fieldValidation="false">
+    <valueExpr/>
+    <parameter name="数据拼包类型" value="选送"/>
+    <parameter name="路径" value="/Envelope/Body/Request/BODY/{{field.fieldName}}"/>
+    <parameter name="类型" value="值"/>
+    <parameter name="命名空间" value=""/>
+  </field>
+  {% endfor %}
+  {% for grid in grids%}
+<field fieldDefaultValue="&quot;&quot;" fieldDescription="" fieldDictGroup=";" fieldName="FORM" fieldType="String" fieldValidation="false">
+    <valueExpr expr="#FORM#REQ"/>
+    <parameter name="数据拼包类型" value="选送"/>
+    <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM"/>
+    <parameter name="类型" value="值"/>
+    <parameter name="命名空间" value=""/>
+  </field>
+  <switch conditionExpr="{{grid.GridName}}List">
+    <case value="!=null">
+      <field fieldDefaultValue="&quot;{{grid.GridName}}&quot;" fieldDictGroup=";" fieldName="name" fieldType="String">
+        <valueExpr/>
+        <parameter name="数据拼包类型" value="选送"/>
+        <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM"/>
+        <parameter name="类型" value="属性"/>
+        <parameter name="命名空间" value=""/>
+      </field>
+      <field fieldDefaultValue="{{grid.GridName}}List.size()" fieldDictGroup=";" fieldName="rows" fieldType="String">
+        <valueExpr/>
+        <parameter name="数据拼包类型" value="选送"/>
+        <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM"/>
+        <parameter name="类型" value="属性"/>
+        <parameter name="命名空间" value=""/>
+      </field>
+      <loop count="{{grid.GridName}}List.size()" name="loop" varName="i">
+        <field fieldDefaultValue="&quot;&quot;" fieldDictGroup=";" fieldName="{{grid.GridName}}" fieldType="String" fieldValidation="false">
+          <valueExpr expr="&quot;&quot;"/>
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM/{{grid.GridName}}"/>
+          <parameter name="类型" value="值"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <field fieldDefaultValue="i+1" fieldDictGroup=";" fieldName="row" fieldType="String">
+          <valueExpr/>
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM/{{grid.GridName}}"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        {% for column in grid.columns %}
+        <field fieldDefaultValue="&quot;&quot;" fieldDescription="{{column.fieldDescription}}" fieldDictGroup=";" fieldName="{{column.fieldName}}" fieldSubtle="false" fieldType="String" fieldValidation="false">
+          <valueExpr expr="{{grid.GridName}}List[i].{{column.fieldName}}"/>
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Request/BODY/FORM/{{grid.GridName}}/{{column.fieldName}}"/>
+          <parameter name="类型" value="值"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        {% endfor %}
+      </loop>
+    </case>
+  </switch>
+  {% endfor %}
+
+  <parameter name="字段值变量" value="var"/>
+  <parameter name="循环结点" value=""/>
+  <parameter name="编码" value="GBK"/>
+  <parameter name="SOAP版本" value="1.1"/>
+  <parameter name="拆包方式" value="自动"/>
+  <parameter name="根路径" value="/Envelope"/>
+</packet>

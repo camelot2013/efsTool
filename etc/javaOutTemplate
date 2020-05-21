@@ -1,0 +1,46 @@
+package efs.trades.${catalog}.T${trxno}2;
+
+import com.siro.ef.*;
+import com.siro.efs2.util.*;
+import com.siro.efs2.event.*;
+import java.util.List;
+import java.util.Map;
+import com.siro.efs2.util.SessionObjectsManager.TellerSessionInformation;
+import efs.publib.baseUtil.SysUtil;
+import efs.publib.bankUtil.GridUtil;
+import efs.publib.bankUtil.TranUtil;
+import efs.publib.bankUtil.TrxUtil;
+import efs.publib.bankUtil.PrtUtil;
+import efs.publib.baseUtil.StrUtil;
+
+public class T${trxno}2 extends ComponentAdvisorImpl {
+
+    Map < Object , Object > T_session;
+    Map < Object , Object > F_session;
+    TellerSessionInformation G_session;
+	Map<Object, Object> outputMap =null;
+	public Canvas root;
+	public ButtonButton btn_OK_确认;
+	${controlItems}
+
+	public void init() throws Exception{
+	    T_session = SysUtil.getTradeSession ( this );
+	    G_session = SysUtil.getTellerSession ( this );
+	    F_session = SysUtil.getFatherTradeSession ( this );
+		if(F_session.containsKey("#OUTPUT#")){
+			TranUtil.copySession(this);
+	    	outputMap  = (Map<Object, Object>) F_session.get("#OUTPUT#");
+	    	TranUtil.flushValuesToFaceFromContext(this, outputMap);
+	    	${gridValues}
+	    }
+
+	}
+
+	public void btn_OK_确认_click(ButtonClickEvent e) throws Exception{
+		if(outputMap !=null){
+			String nplistStr = StrUtil.convertObjectToString(outputMap.get("NPLIST"));
+			PrtUtil.prtByNPList(this, nplistStr, outputMap);
+		}
+		TrxUtil.TradeReset(this);
+	}
+}

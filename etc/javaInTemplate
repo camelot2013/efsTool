@@ -1,0 +1,46 @@
+package efs.trades.${catalog}.T${trxno};
+
+import com.siro.ef.*;
+import com.siro.efs2.util.*;
+import com.siro.efs2.event.*;
+import java.util.Map;
+import java.util.HashMap;
+import com.siro.efs2.util.SessionObjectsManager.TellerSessionInformation;
+import efs.publib.baseUtil.SysUtil;
+import efs.publib.bankUtil.TranUtil;
+import efs.publib.bankUtil.TrxUtil;
+import efs.publib.bankUtil.CommonConstants;
+import efs.publib.baseUtil.StrUtil;
+
+public class T${trxno} extends ComponentAdvisorImpl {
+
+    Map < Object , Object > T_session;
+    Map < Object , Object > F_session;
+    TellerSessionInformation G_session;
+	public Canvas root;
+	public ButtonButton btn_EXIT_退出;
+	public ButtonButton btn_SUBMIT_提交;
+	${controlItems}
+
+	public void init() throws Exception{
+	    T_session = SysUtil.getTradeSession ( this );
+	    G_session = SysUtil.getTellerSession ( this );
+	    F_session = SysUtil.getFatherTradeSession ( this );
+        TrxUtil.TradeInit(this);
+	}
+	public void btn_EXIT_退出_click(ButtonClickEvent e) throws Exception{
+		TrxUtil.TradeClose(this);
+	}
+
+	public void btn_SUBMIT_提交_click(ButtonClickEvent e) throws Exception{
+		TranUtil.prepareTransaction(this, context, true);
+		Map<Object, Object> retMap = TrxUtil.host_exchange(this, getTcode(), "01");
+		if(TranUtil.callSucc(this, retMap)){
+			context.put("#OUTPUT#", retMap);
+			TranUtil.openOutPage(this, "${catalog}");
+		}
+	}
+	public void faceInited() throws Exception{
+		//所有界面初始化逻辑请在函数内实现
+	}
+}

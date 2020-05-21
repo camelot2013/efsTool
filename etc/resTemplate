@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packet type="SOAP报文">
+  {% for field in fields %}
+  <field fieldDefaultValue="&quot;&quot;" fieldDescription="{{field.fieldDescription}}" fieldDictGroup=";" fieldName="{{field.fieldName}}" fieldType="String" fieldValidation="false">
+    <valueExpr/>
+    <parameter name="数据拼包类型" value="选送"/>
+    <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[0]/{{field.fieldName}}"/>
+    <parameter name="类型" value="值"/>
+    <parameter name="命名空间" value=""/>
+  </field>
+  {% endfor %}
+  <field fieldDefaultValue="" fieldDescription="" fieldDictGroup=";" fieldName="FORMNUM" fieldType="String" fieldValidation="false">
+    <valueExpr/>
+    <parameter name="数据拼包类型" value="选送"/>
+    <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[0]/FORM"/>
+    <parameter name="类型" value="节点个数"/>
+    <parameter name="命名空间" value=""/>
+  </field>
+  <switch conditionExpr="FORMNUM">
+    <case value="!=null &amp;&amp; FORMNUM!=&quot;&quot;">
+      <loop count="FORMNUM" name="FORM" varName="i">
+        <field fieldDictGroup=";" fieldName="name" fieldType="String" fieldValidation="false">
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[0]/FORM[i]"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <field fieldDictGroup=";" fieldName="rows" fieldType="String" fieldValidation="false">
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[0]/FORM[i]"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <switch conditionExpr="FORM[i].name">
+          {% for grid in grids%}
+          <case value="==&quot;{{grid.GridName}}&quot;">
+						<switch conditionExpr="rows">
+							<case value="!=null &amp;&amp; rows!=&quot;&quot;">
+								<loop count="rows" name="{{grid.GridName}}" varName="j">
+									{% for column in grid.columns %}
+									<field fieldDefaultValue="&quot;&quot;" fieldDescription="{{column.fieldDescription}}" fieldDictGroup=";" fieldName="{{column.fieldName}}" fieldType="String" fieldValidation="false">
+										<parameter name="数据拼包类型" value="选送"/>
+										<parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[0]/FORM[i]/{{grid.GridName}}[j]/{{column.fieldName}}"/>
+										<parameter name="类型" value="值"/>
+										<parameter name="命名空间" value=""/>
+									</field>
+									{% endfor %}
+								</loop>
+							</case>
+						</switch>
+					</case>
+          {% endfor %}
+        </switch>
+      </loop>
+    </case>
+  </switch>
+    <field fieldDictGroup=";" fieldName="FLAGV" fieldType="String" fieldValidation="false">
+    <parameter name="数据拼包类型" value="选送"/>
+    <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT"/>
+    <parameter name="类型" value="节点个数"/>
+    <parameter name="命名空间" value=""/>
+  </field>
+  <switch conditionExpr="FLAGV">
+    <case value="!=null &amp;&amp; FLAGV!=&quot;&quot;">
+      <loop count="FLAGV" name="FORM1" varName="z">
+        <field fieldDictGroup=";" fieldName="name" fieldType="String">
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <field fieldDictGroup=";" fieldName="type" fieldType="String" fieldValidation="false">
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <field fieldDictGroup=";" fieldName="rows" fieldType="String" fieldValidation="false">
+          <parameter name="数据拼包类型" value="选送"/>
+          <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]"/>
+          <parameter name="类型" value="属性"/>
+          <parameter name="命名空间" value=""/>
+        </field>
+        <switch conditionExpr="FORM1[z].name">
+        	{% for obj in objects %}
+        	<case value="==&quot;{{obj.objName}}&quot;">
+        		{% for field in obj.fields %}
+        		<field fieldDefaultValue="&quot;&quot;" fieldDescription="{{field.fieldDescription}}" fieldDictGroup=";" fieldName="{{field.fieldName}}" fieldType="String" fieldValidation="false">
+              <valueExpr/>
+              <parameter name="数据拼包类型" value="选送"/>
+              <parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]/{{field.fieldName}}"/>
+              <parameter name="类型" value="值"/>
+              <parameter name="命名空间" value=""/>
+            </field>
+            {% endfor %}
+            {% for grid in obj.grids %}
+						<field fieldDescription="循环次数" fieldDictGroup=";" fieldName="FORMNUM" fieldType="String" fieldValidation="false">
+							<parameter name="数据拼包类型" value="选送"/>
+							<parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]/FORM/{{grid.GridName}}"/>
+							<parameter name="类型" value="节点个数"/>
+							<parameter name="命名空间" value=""/>
+						</field>
+						<switch conditionExpr="FORMNUM">
+							<case value="!=null">
+								<loop count="FORMNUM" name="{{grid.GridName}}" varName="i">
+									{% for column in grid.columns %}
+									<field fieldDescription="{{column.fieldDescription}}" fieldDictGroup=";" fieldName="{{column.fieldName}}" fieldType="String">
+										<parameter name="数据拼包类型" value="选送"/>
+										<parameter name="路径" value="/Envelope/Body/Response/BODY/OBJECT[z]/FORM/FDIP01[i]/{{column.fieldName}}"/>
+										<parameter name="类型" value="值"/>
+										<parameter name="命名空间" value=""/>
+									</field>
+									{% endfor %}
+								</loop>
+							</case>
+						</switch>
+						{% endfor %}
+					</case>
+        	{% endfor %}
+        </switch>
+      </loop>
+    </case>
+  </switch>
+  <parameter name="字段值变量" value="var"/>
+  <parameter name="循环结点" value=""/>
+  <parameter name="编码" value="GB18030"/>
+  <parameter name="拆包方式" value="手动"/>
+  <parameter name="SOAP版本" value="1.1"/>
+  <parameter name="根路径" value="/Envelope"/>
+</packet>
