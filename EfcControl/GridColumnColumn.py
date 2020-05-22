@@ -27,10 +27,10 @@ class GridColumnColumn(Component):
         object.__setattr__(self, 'isKey', 'false')
         self.items =[]
         object.__setattr__(self, 'locked', 'false')
-        object.__setattr__(self, 'maxLength', 0)
-        object.__setattr__(self, 'maxValue', 9223372036854775807)
-        object.__setattr__(self, 'minLength', 0)
-        object.__setattr__(self, 'minValue', 0)
+        # object.__setattr__(self, 'maxLength', 0)
+        # object.__setattr__(self, 'maxValue', 9223372036854775807)
+        # object.__setattr__(self, 'minLength', 0)
+        # object.__setattr__(self, 'minValue', 0)
         object.__setattr__(self, 'relationField', '')
         self.sortable ='true'
         self.storeType ='constant'

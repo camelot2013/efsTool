@@ -75,7 +75,7 @@ class javaBuild(object):
                 isGrid = False
                 gridName = ''
                 continue
-            if dataType not in ('select', 'grid', 'char', 'int', 'double', 'money'):
+            if dataType not in ('select', 'grid', 'char', 'int', 'double', 'money', 'date'):
                 continue
             if isGrid:
                 aClassName = 'GridColumnColumn'
@@ -101,6 +101,9 @@ class javaBuild(object):
                 elif dataType in ('int', 'double'):
                     aClassName = 'FormFieldNumber'
                     fieldName = 'num_' + dataName + '_' + dataLabel
+                elif dataType == 'date':
+                    aClassName = 'FormFieldDate'
+                    fieldName = 'date_' + dataName + '_' + dataLabel
             # tempStr = Template('	public ${eclass} ${qualifiedId};')
             javaDefStr = Template('	public ${eclass} ${qualifiedId};').substitute({'eclass':aClassName, 'qualifiedId':fieldName})
             if isOut:

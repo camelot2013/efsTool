@@ -29,7 +29,14 @@ if __name__ == "__main__":
     # fields=[{'fieldDescription':'冻结操作标志','fieldName':'FROPTP'},{'fieldDescription':'冻结编号','fieldName':'FRENUM'}]
     # print template.render({'fields':fields,'grids':[{'GridName':'FCFLX2','columns':[{'fieldDescription':'维护标志','fieldName':'WEIHBZ'},{'fieldDescription':'交易金额','fieldName':'JIOYJE'}]}]})
 
-    mbuild = messageBuild('99AA')
-    req=mbuild.createReqPacket()
-    res=mbuild.createResPacket()
-    mbuild.writePacket()
+    # mbuild = messageBuild('99AA')
+    # req=mbuild.createReqPacket()
+    # res=mbuild.createResPacket()
+    # mbuild.writePacket()
+    # fb = faceBuild()
+    # field = fb.createinstance(False,'char','CUACNO','客户账号')
+    # print hasattr(field,'maxLength')
+    # field = fb.createinstance(False, 'money', 'CUACNO', '客户账号')
+    # print hasattr(field, 'maxLength')
+    example2 = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
+    print [j**2 for i in example2 if len(i)>1 for j in i if j%2 == 0]

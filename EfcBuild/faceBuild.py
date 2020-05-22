@@ -10,6 +10,7 @@ from EfcControl.FormFieldChinese import FormFieldChinese
 from EfcControl.FormFieldPassword import FormFieldPassword
 from EfcControl.FormFieldNumber import FormFieldNumber
 from EfcControl.FormFieldComboBox import FormFieldComboBox
+from EfcControl.FormFieldDate import FormFieldDate
 from EfcControl.GridPanel import GridPanel
 from EfcControl.GridColumnColumn import GridColumnColumn
 from EfcControl.Canvas import Canvas
@@ -47,7 +48,7 @@ class faceBuild(object):
         if isColumn:
             aClassName ='GridColumnColumn'
         else:
-            if dataType not in('select', 'grid', 'char', 'int', 'double','money'):
+            if dataType not in('select', 'grid', 'char', 'int', 'double','money', 'date'):
                 raise AttributeError('接口定义文件中类型描述错误')
             if dataType =='grid':
                 aClassName ='GridPanel'
@@ -55,6 +56,8 @@ class faceBuild(object):
                 aClassName ='FormFieldFText'
             elif dataType =='select':
                 aClassName ='FormFieldComboBox'
+            elif dataType =='date':
+                aClassName ='FormFieldDate'
             elif dataType =='money':
                 aClassName ='FormFieldMoney'
             elif dataType in('int','double'):
@@ -104,7 +107,11 @@ class faceBuild(object):
                 else:
                     isColumn = True
                     self.insetGridColumn(canvas, gridName, field)
-
+            if hasattr(field,'maxLength'):
+                try:
+                    field.maxLength = int(dataLeng)
+                except ValueError,e:
+                    field.maxLength =0
             if not isColumn:
                 canvas.items.append(field.__dict__)
         return iRow
