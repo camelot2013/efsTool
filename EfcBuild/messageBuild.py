@@ -45,28 +45,16 @@ class messageBuild(object):
         self.__req_template = env.get_template('reqTemplate')
         self.__res_template = env.get_template('resTemplate')
 
-    #obj = {'objName': '', 'fields': [], 'grids': [{'GridName':'','columns':[]}]}
     def __createPrt(self, obj, objName, dataName, dataLabel, dataType, isGrid=False, gridName=''):
-
-        obj['objName'] = objName
         if isGrid:
-            isFlag = False
             for grid in obj['grids']:
-                if not grid['GridName']:
-                    grid['GridName'] = gridName
-                    grid['columns'].append({'fieldDescription':dataLabel,'fieldName':dataName})
-                    isFlag = True
-                    break
-                if grid['GridName'] == gridName:
+                if grid['GridName'] ==gridName:
                     grid['columns'].append({'fieldDescription': dataLabel, 'fieldName': dataName})
-                    isFlag = True
-                    break
-            if not isFlag:
-                obj['grids'].append({'GridName':gridName,'columns':[{'fieldDescription': dataLabel, 'fieldName': dataName}]})
         else:
-            obj['fields'].append({'fieldDescription':dataLabel,'fieldName':dataName})
-
-        # print dataName, objName, isGrid, gridName, obj
+            if 'fields' in obj.keys():
+                obj['fields'].append({'fieldDescription': dataLabel, 'fieldName': dataName})
+            else:
+                obj['fields'] = [{'fieldDescription': dataLabel, 'fieldName': dataName}]
 
     def createResPacket(self):
         isGrid = False
@@ -98,19 +86,17 @@ class messageBuild(object):
         objects=[]
         isGrid = False
         gridName = ''
-        # obj = {'objName': '', 'fields': [], 'grids': [{'GridName':'','columns':[]}]}
-        obj = {'objName': '', 'fields': [], 'grids': []}
         for iIndex in range(1, self.tablePrt.nrows):
             rowValue = self.tablePrt.row_values(iIndex)
-            # objName = rowValue[0].strip() if rowValue[0].strip() else objName
+            objName = rowValue[0].strip()
+            if objName:
+                obj = self.__getRptObj(objects, objName)
+                if not obj:
+                    obj = {'objName': objName}
+                    objects.append(obj)
             dataName = rowValue[1].strip()
             dataLabel = rowValue[2].strip()
             dataType = rowValue[3].strip().lower()
-            if rowValue[0].strip() and rowValue[0].strip() != objName:
-                # obj = {'objName': '', 'fields': [], 'grids': [{'GridName': '', 'columns': []}]}
-                obj = {'objName': '', 'fields': [], 'grids': []}
-                objName = rowValue[0].strip()
-                objects.append(obj)
             if '/' == dataName:
                 isGrid = False
                 gridName = ''
@@ -118,10 +104,32 @@ class messageBuild(object):
             if dataType == 'grid':
                 isGrid = True
                 gridName = dataName
+                if 'grids' in obj.keys():
+                    obj['grids'].append({'GridName':dataName,'columns':[]})
+                else:
+                    obj['grids'] =[{'GridName': dataName, 'columns': []}]
                 continue
             self.__createPrt(obj, objName, dataName, dataLabel, dataType, isGrid, gridName)
-
         return self.resTemplate.render({'fields': fields, 'grids': grids, 'objects':objects})
+
+    def __getObjRptGrid(self, obj, gridName):
+        if 'grids' not in obj.keys():
+            obj['grids'] = [{'GridName':gridName,'columns':[]}]
+        rptGrids = obj['grids']
+        if isinstance(rptGrids, list):
+            if rptGrids.__len__()>0:
+                for grid in rptGrids:
+                    if 'GridName' in grid.keys():
+                        if grid['GridName'] == gridName:
+                            return grid
+
+    def __getRptObj(self, rptObjs, objName):
+        if isinstance(rptObjs, list):
+            if rptObjs.__len__() >0:
+                for obj in rptObjs:
+                    if 'objName' in obj.keys():
+                        if obj['objName'] == objName:
+                            return obj
 
     def createReqPacket(self):
         isGrid = False
