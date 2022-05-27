@@ -1,0 +1,101 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsrm="http://schemas.xmlsoap.org/ws/2005/02/rm" xmlns:wssec="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+	<soapenv:Header>
+		<wsa:Addressing>
+			<wsa:ReplayTo>
+				<wsa:Address>http://business456.com/User12</wsa:Address>
+			</wsa:ReplayTo>
+			<wsa:Address>http://fabrikam123.com/Traffic</wsa:Address>
+			<wsa:Action>http://fabrikam123.com/Traffic/Status</wsa:Action>
+		</wsa:Addressing>
+		<wssec:Security>
+			<wssec:BinarySecurityToken EncodingType="wssec:Base64Binary" ValueType="wssec:X509v3">ADBCH1234EFD2345EFGIJK</wssec:BinarySecurityToken>
+		</wssec:Security>
+		<wsrm:ReliableMessaging>
+			<wsrm:Sequence>
+				<wsrm:Identifier>http://fabrikam123.com/seq1234</wsrm:Identifier>
+				<wsrm:MessageNumber>10</wsrm:MessageNumber>
+			</wsrm:Sequence>
+		</wsrm:ReliableMessaging>
+	</soapenv:Header>
+	<soapenv:Body>
+		<Response>
+			<SYSHEAD>
+				<SHJBCD>0</SHJBCD>
+				<BAWMAC/>
+				<MACJGH>1c7f</MACJGH>
+				<PINZHZ>0583925485890797</PINZHZ>
+				<CHNLNO>110</CHNLNO>
+				<QUDQUX>110</QUDQUX>
+				<MACFLG>0</MACFLG>
+				<PINFLG>0</PINFLG>
+				<COMFLG>0</COMFLG>
+				<ZHUJFW>fuzhai_01</ZHUJFW>
+				<XXJSBZ/>
+				<SJBSXH>1</SJBSXH>
+				<JIOYBZ/>
+				<MIYBBH>2468</MIYBBH>
+				<QUDAOO>00</QUDAOO>
+				<MIMPYL/>
+				<FAREDM>9999</FAREDM>
+				<GENZHH>000502141450</GENZHH>
+				<BAOWLX>XML</BAOWLX>
+				<JIQIBH/>
+				<CHXBBH/>
+				<YUANDZ>172.17.31.55</YUANDZ>
+				<MUBIDZ>0.0.0.0</MUBIDZ>
+				<YANYBZ/>
+				<JDFHBZ/>
+				<FHJAYM/>
+				<PZJYMC/>
+				<RCTJBZ/>
+				<BAOWIO/>
+				<LDJYBZ/>
+				<XTBAOL/>
+			</SYSHEAD>
+			<RETTRANHEAD>
+				<JIAOYM>{{trxno}}</JIAOYM>
+				<LDJYDM/>
+				<JIOYRQ>20240420</JIOYRQ>
+				<JIOYSJ>152111</JIOYSJ>
+				<GUIYLS/>
+				<KUAJRQ>20240420</KUAJRQ>
+				<JIEKBB/>
+				<DSAFLS/>
+				<DSFRQI/>
+				<WHJGFG/>
+				<JDFHBZ/>
+				<FHJAYM/>
+				<PZJYMC/>
+				<FHBAOL/>
+				<CWJYXH>0</CWJYXH>
+				<NPLIST/>
+				<PTCWDH>AAAAAAA</PTCWDH>
+			</RETTRANHEAD>
+			<BODY >
+				{% if output_object is defined and output_object|length > 0  %}<OBJECT name="{{output_object.object_name}}" type="WINDOW">
+				    {% for output_field in output_object.output_fields %}<{{output_field.fieldName}}>{{output_field.fieldValue}}</{{output_field.fieldName}}>
+				    {% endfor %}
+				    {% for output_grid in output_object.output_grids %}<FORM name="{{output_grid.GridName}}" rows="1">
+				        <{{output_grid.GridName}} row="1">
+				            {% for column in output_grid.columns %}<{{column.fieldName}}>{{column.fieldValue}}</{{column.fieldName}}>
+				            {% endfor %}
+				        </{{output_grid.GridName}}>
+				    </FORM>
+				    {% endfor %}
+				</OBJECT>{% endif %}
+				{% if print_objects is defined and print_objects|length > 0  %}{% for print_object in print_objects %}<OBJECT name="{{print_object.objName}}" type="PRINTER">
+                    {% for field in print_object.fields %}<{{field.fieldName}}>{{field.fieldValue}}</{{field.fieldName}}>
+				    {% endfor %}
+				    {% for grid in print_object.grids %}<FORM name="{{grid.GridName}}" rows="1">
+				        <{{grid.GridName}} row="1">
+				            {% for column in grid.columns %}<{{column.fieldName}}>{{column.fieldValue}}</{{column.fieldName}}>
+				            {% endfor %}
+				        </{{grid.GridName}}>
+				    </FORM>
+				    {% endfor %}
+				</OBJECT>
+				{% endfor %}{% endif %}
+			</BODY>
+		</Response>
+	</soapenv:Body>
+</soapenv:Envelope>

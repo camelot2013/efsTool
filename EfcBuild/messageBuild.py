@@ -44,6 +44,7 @@ class messageBuild(object):
         env = Environment(loader=FileSystemLoader(tempDir))
         self.__req_template = env.get_template('reqTemplate')
         self.__res_template = env.get_template('resTemplate')
+        self.__fakeres_template = env.get_template('fakeResTemplate')
 
     def __createPrt(self, obj, objName, dataName, dataLabel, dataType, isGrid=False, gridName=''):
         if isGrid:
@@ -66,7 +67,6 @@ class messageBuild(object):
             dataName = rowValue[1].strip()
             dataLabel = rowValue[2].strip()
             dataType = rowValue[3].strip().lower()
-
             if '/' == dataName:
                 isGrid = False
                 gridName = ''
@@ -82,6 +82,12 @@ class messageBuild(object):
                     grids.append({'GridName':dataName,'columns':[]})
                 else:
                     fields.append({'fieldDescription':dataLabel,'fieldName':dataName})
+        output_object ={'object_name': 'O'+self.trxno+'2'}
+        if fields:
+            output_object['output_fields'] = fields
+        if grids:
+            output_object['output_grids'] = grids
+
         objName =''
         objects=[]
         isGrid = False
@@ -110,7 +116,8 @@ class messageBuild(object):
                     obj['grids'] =[{'GridName': dataName, 'columns': []}]
                 continue
             self.__createPrt(obj, objName, dataName, dataLabel, dataType, isGrid, gridName)
-        return self.resTemplate.render({'fields': fields, 'grids': grids, 'objects':objects})
+        # print self.__fakeres_template.render({'output_object': output_object, 'print_objects':objects})
+        return self.resTemplate.render({'fields': fields, 'grids': grids, 'objects':objects}), self.__fakeres_template.render({'output_object': output_object, 'print_objects':objects, 'trxno':self.trxno})
 
     def __getObjRptGrid(self, obj, gridName):
         if 'grids' not in obj.keys():
@@ -165,8 +172,13 @@ class messageBuild(object):
         outDir =getDefDir('SOAP','outDir')
         reqFile = os.path.join(outDir, self.trxno + '_req.packet')
         resFile = os.path.join(outDir, self.trxno + '_res.packet')
+        fakresFile = os.path.join(outDir, self.trxno + '.xml')
         with open(reqFile, 'w') as fw:
             fw.write(self.createReqPacket())
 
+        respacket, fakeres = self.createResPacket()
         with open(resFile, 'w') as fw:
-            fw.write(self.createResPacket())
+            fw.write(respacket)
+
+        with open(fakresFile, 'w') as fw:
+            fw.write(fakeres)
